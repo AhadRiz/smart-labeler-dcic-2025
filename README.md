@@ -23,6 +23,6 @@ The `smart_labeler_colab.py` script is a full labeling pipeline built around:
 
 ```python
 def _load_dataset(self, dataset_name):
-    json_path = os.path.join(FLAGS.data_root, dataset_name, f"{dataset_name}-slice{FLAGS.v_fold}.json")
+    json_path = os.path.join(FLAGS.data_root, dataset_name, f"{dataset_name}-slice{FLAGS.v_fold}.json")`
 
-
+### 3. **Dummy Label Injection (Simulated Oracle)**

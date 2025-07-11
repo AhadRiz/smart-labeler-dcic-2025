@@ -1,0 +1,10 @@
+numpy
+torch
+torchvision
+tqdm
+scikit-learn
+matplotlib
+umap-learn
+pandas
+tensorflow
+keras

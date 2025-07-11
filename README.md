@@ -8,3 +8,21 @@ This repository presents a complete implementation of a **data-centric image cla
 - ✅ **Goal**: Minimize KL Divergence between predicted labels and ground truth.
 - ✅ **Our Score**: Achieved **KL Divergence ≈ 0.99** on local validation.
 
+
+## 🧠 How the Smart Labeler Works
+
+The `smart_labeler_colab.py` script is a full labeling pipeline built around:
+
+### 1. **CLIP Feature Extraction**  
+`self.clip_model, self.preprocess = clip.load("ViT-B/32", device=self.device)`
+
+- Loads OpenAI’s CLIP model to convert each image into a **512-dimensional semantic embedding**.
+- These embeddings reflect how "similar" images are in meaning or appearance.
+
+### 2. **Loading the Dataset**
+
+```python
+def _load_dataset(self, dataset_name):
+    json_path = os.path.join(FLAGS.data_root, dataset_name, f"{dataset_name}-slice{FLAGS.v_fold}.json")
+
+

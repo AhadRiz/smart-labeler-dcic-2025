@@ -20,9 +20,10 @@ The `smart_labeler_colab.py` script is a full labeling pipeline built around:
 - These embeddings reflect how "similar" images are in meaning or appearance.
 
 ### 2. **Loading the Dataset**
-
 ```python
-def _load_dataset(self, dataset_name):
-    json_path = os.path.join(FLAGS.data_root, dataset_name, f"{dataset_name}-slice{FLAGS.v_fold}.json")`
+`def _load_dataset(self, dataset_name):
+    json_path = os.path.join(FLAGS.data_root, dataset_name, f"{dataset_name}-slice{FLAGS.v_fold}.json")
 
-### 3. **Dummy Label Injection (Simulated Oracle)**
+
+
+

@@ -21,9 +21,74 @@ The `smart_labeler_colab.py` script is a full labeling pipeline built around:
 
 ### 2. **Loading the Dataset**
 ```python
-`def _load_dataset(self, dataset_name):
+def _load_dataset(self, dataset_name):
     json_path = os.path.join(FLAGS.data_root, dataset_name, f"{dataset_name}-slice{FLAGS.v_fold}.json")
+    with open(json_path, 'r') as f:
+        return json.load(f)
+```
+--> Loads the DCIC-provided .json dataset for the specified fold.
+--> The dataset contains image paths and placeholders for soft labels.
 
+### 3. **Dummy Label Injection (Simulated Oracle)**
+```python
+def _inject_dummy_soft_labels(self, data):
+    inject_count = len(data['images']) // 2
+```
+--> The algorithm simulates initial labeled data by injecting random soft labels for 50% of the dataset.
+--> Soft labels are probability distributions across classes (not hard labels).
+--> Ensures diversity of training examples to begin label propagation.
+
+### 4. **Feature Extraction via CLIP**
+```python
+def _extract_features(self, paths):
+    image = self.preprocess(Image.open(path).convert("RGB"))
+```
+--> For every image, uses CLIP to extract feature vectors.
+--> If an image cannot be read, a zero vector is substituted.
+
+### 5. **Dimensionality Reduction (UMAP)**
+```python
+def _reduce_dimensionality(self, features):
+    return umap.UMAP(...).fit_transform(features)
+```
+--> Reduces the 512-D feature space to 2D or 3D (default is 2D).
+--> Used later for both visualization and k-NN label propagation.
+
+### 6. **Label Initialization**
+```python
+def _initialize_labels(self, soft_gts, n_classes):
+    labels = np.zeros((len(soft_gts), n_classes))
+```
+--> Initializes a matrix of label probabilities.
+--> If a soft label is present, it’s used; otherwise, uniform probabilities are assumed.
+
+### 7. **Entropy-Based Active Learning**
+```python
+def _compute_entropy(self, probs):
+    return entropy(probs, axis=1)
+```
+--> Computes entropy of predicted labels: higher entropy = more uncertain.
+--> Uncertain samples are queried in small batches (active_learning_batch), simulating annotation.
+
+### 8. **Label Propagation via k-NN**
+```python
+def _propagate_labels(self, features, labels, confident_idxs):
+    nbrs = NearestNeighbors(n_neighbors=5).fit(features)
+```
+--> Propagates confident labels to neighbors in UMAP space.
+--> If neighbor consensus exceeds threshold, that label is adopted.
+
+### 9. **Output JSON Generation**
+```python
+def _save_results(self, dataset_name, labels):
+    json.dump(labels, f)
+```
+A valid DCIC-format JSON is created with:
+
+--> images: paths and soft_gt
+--> categories
+--> budget and weighted_budget (auto-added downstream)
+--> name, v_fold
 
 
 

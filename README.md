@@ -90,5 +90,19 @@ A valid DCIC-format JSON is created with:
 --> budget and weighted_budget (auto-added downstream)
 --> name, v_fold
 
+### 10. **KL Divergence Evaluation**
+```python
+def _calculate_kl_divergence(self, predicted, gt):
+    return np.mean(np.sum(gt * np.log(gt / predicted), axis=1))
+```
+--> KL divergence is computed between predicted and ground-truth soft labels.
+--> Tracks performance across confident samples.
 
+### 11. **Visualization (Optional but Insightful)**
+```pyhton
+def _visualize_embeddings(self, embeddings, labels, dataset_name):
+def _visualize_confidence(self, confidences, dataset_name):
+```
 
+--> Generates UMAP scatter plots and confidence histograms.
+--> Saved as PNGs named after each dataset.
